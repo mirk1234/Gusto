@@ -26,6 +26,7 @@
         </div>
         <button id="cart-btn" class="icon cart" aria-label="Open cart">🛒<span class="cart-count" aria-hidden="true">0</span></button>
         <button id="theme-toggle" class="icon theme-toggle" aria-label="Toggle theme">🌙</button>
+        <button id="language-toggle" class="language-toggle" aria-label="Switch to Ukrainian">UA</button>
       </div>
     </header>
 
@@ -148,7 +149,10 @@
       </div>
       <form id="secret-console-auth">
         <label class="secret-console-auth-label" for="secret-console-password">Enter password</label>
-        <input id="secret-console-password" type="text" autocomplete="off" placeholder="Enter password" aria-label="Secret console password" />
+        <div class="password-field">
+          <input id="secret-console-password" type="password" autocomplete="off" placeholder="Enter password" aria-label="Secret console password" />
+          <button id="password-visibility" class="password-visibility" type="button" aria-label="Show password" title="Show password">◌</button>
+        </div>
         <button class="primary" type="submit">Unlock</button>
       </form>
       <form id="secret-console-form" class="hidden" hidden>
