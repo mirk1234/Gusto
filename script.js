@@ -5,6 +5,7 @@ const LS_QUESTS = 'gusto.quests.v1'
 const LS_ORDERS = 'gusto.orders'
 const LS_LAST_CHALLENGE = 'gusto.last_challenge_order'
 const QUEST_LIMITS = {toggles:3,orders:15,badgeClicks:3}
+const SECRET_CONSOLE_PASSWORD = 'Gusto_Group'
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=80'
 
 // Sample data
@@ -157,6 +158,8 @@ function syncExpandedCards(){
 
 function renderProducts(){
   // populate each category section container
+  expandedItemIds.clear()
+  data.categories.forEach(cat=>cat.items.forEach(item=>expandedItemIds.add(item.id)))
   data.categories.forEach(cat=>{
     const container = document.querySelector(`.menu-list[data-cat="${cat.id}"]`)
     if(!container) return
@@ -191,6 +194,7 @@ function renderProducts(){
       container.appendChild(acc)
     })
   })
+  syncExpandedCards()
 }
 
 function renderChallenges(){
@@ -207,11 +211,15 @@ function renderChallenges(){
   underground.setAttribute('aria-hidden',String(!visible))
   underground.classList.toggle('is-locked',!undergroundUnlocked)
   underground.classList.toggle('is-unlocked',undergroundUnlocked)
+  const undergroundOpen = visible && undergroundUnlocked
+  underground.classList.toggle('is-open',undergroundOpen)
   const undergroundToggle = underground.querySelector('.category-toggle')
   const undergroundIcon = underground.querySelector('.underground-status-icon')
   const undergroundProgress = document.getElementById('underground-progress')
   undergroundToggle.disabled = !undergroundUnlocked
   undergroundToggle.setAttribute('aria-disabled',String(!undergroundUnlocked))
+  undergroundToggle.setAttribute('aria-expanded',String(undergroundOpen))
+  underground.querySelector('.menu-list').setAttribute('aria-hidden',String(!undergroundOpen))
   undergroundIcon.textContent = undergroundUnlocked ? '✅' : '🔒'
   undergroundProgress.textContent = undergroundUnlocked ? '0 challenge quests remaining (Unlocked!)' : `${remainingQuests} challenge quests remaining`
   // populate cards (hidden via overlay until unlocked)
@@ -314,6 +322,144 @@ function startCountdown(deadline){
     if(left<=0){clearInterval(countdownTimer);out.textContent='00:00';localStorage.removeItem(LS_LAST_CHALLENGE)}
   }
   tick(); if(countdownTimer) clearInterval(countdownTimer);countdownTimer=setInterval(tick,1000)
+}
+
+function setupSecretConsole(){
+  const panel = document.getElementById('secret-console')
+  const auth = document.getElementById('secret-console-auth')
+  const password = document.getElementById('secret-console-password')
+  const form = document.getElementById('secret-console-form')
+  const input = document.getElementById('secret-console-input')
+  const output = document.getElementById('secret-console-output')
+  let authenticated = false
+  const show = ()=>{
+    panel.classList.remove('hidden')
+    panel.setAttribute('aria-hidden','false')
+    authenticated = false
+    auth.classList.remove('hidden')
+    form.classList.add('hidden')
+    output.textContent = 'Password required.'
+    password.focus()
+  }
+  const hide = ()=>{
+    panel.classList.add('hidden')
+    panel.setAttribute('aria-hidden','true')
+    authenticated = false
+    auth.classList.remove('hidden')
+    form.classList.add('hidden')
+    password.value = ''
+  }
+  const write = message=>{output.textContent=message}
+  const parseTime = value=>{
+    const match = value.trim().match(/^(\d{1,2}):(\d{2})$/)
+    if(!match || Number(match[2]) > 59) return null
+    return Number(match[1]) * 60 + Number(match[2])
+  }
+  const run = command=>{
+    const normalized = command.trim().toLowerCase()
+    if(normalized === 'help'){
+      write('Commands: unlock.underground | reset.underground | reset.console | order-tracking-time: MM:SS | test.tracking | debug.state | debug.cards | debug.tracking | status | close-tracking | clear')
+      return
+    }
+    if(normalized === 'unlock.underground'){
+      quests.orders = QUEST_LIMITS.orders
+      quests.toggles = QUEST_LIMITS.toggles
+      quests.badgeClicks = QUEST_LIMITS.badgeClicks
+      quests.bigOrder = true
+      saveQuests()
+      document.documentElement.classList.add('dark')
+      updateThemeIcons(true)
+      renderChallenges()
+      write('Underground unlocked.')
+      return
+    }
+    if(normalized === 'reset.underground'){
+      quests.orders = 0
+      quests.toggles = 0
+      quests.badgeClicks = 0
+      quests.bigOrder = false
+      saveQuests()
+      localStorage.removeItem(LS_LAST_CHALLENGE)
+      closeOrderTracking()
+      renderChallenges()
+      write('Underground progress reset.')
+      return
+    }
+    if(normalized === 'reset.console' || normalized === 'lock.console'){
+      hide()
+      return
+    }
+    if(normalized.startsWith('order-tracking-time:')){
+      const seconds = parseTime(normalized.slice('order-tracking-time:'.length).trim().replace(/^set\s+/,''))
+      if(seconds === null){write('Use order-tracking-time: MM:SS');return}
+      const panel = document.getElementById('order-tracking')
+      panel.classList.remove('hidden')
+      panel.setAttribute('aria-hidden','false')
+      localStorage.removeItem(LS_LAST_CHALLENGE)
+      document.getElementById('track-info').textContent = 'Console timer'
+      startCountdown(Date.now() + seconds * 1000)
+      write(`Order tracking timer set to ${normalized.slice(-5)}.`)
+      return
+    }
+    if(normalized === 'test.tracking'){
+      localStorage.removeItem(LS_LAST_CHALLENGE)
+      const trackingPanel = document.getElementById('order-tracking')
+      trackingPanel.classList.remove('hidden')
+      trackingPanel.setAttribute('aria-hidden','false')
+      document.getElementById('track-info').textContent = 'Test tracking order'
+      startCountdown(Date.now() + 30 * 1000)
+      write('Tracking test started for 00:30.')
+      return
+    }
+    if(normalized === 'debug.state'){
+      write(`Theme: ${isSecretVisible() ? 'dark' : 'light'} | Underground: ${checkIsUnlocked(getQuestState(quests)) ? 'unlocked' : 'locked'} | Orders: ${orders.length} | Cart: ${cart.length}`)
+      return
+    }
+    if(normalized === 'debug.cards'){
+      const cards = [...document.querySelectorAll('.accordion')]
+      const expanded = cards.filter(card=>card.classList.contains('expanded')).length
+      write(`Cards: ${expanded}/${cards.length} expanded | Sections: ${document.querySelectorAll('.category-section-block.is-open').length} open`)
+      return
+    }
+    if(normalized === 'debug.tracking'){
+      const trackingPanel = document.getElementById('order-tracking')
+      write(`Tracking: ${trackingPanel.classList.contains('hidden') ? 'closed' : 'open'} | Timer: ${document.getElementById('countdown').textContent}`)
+      return
+    }
+    if(normalized === 'status'){
+      write(`Underground: ${checkIsUnlocked(getQuestState(quests)) ? 'unlocked' : 'locked'} | Orders: ${orders.length} | Cart items: ${cart.length}`)
+      return
+    }
+    if(normalized === 'close-tracking'){
+      closeOrderTracking()
+      write('Order tracking closed.')
+      return
+    }
+    if(normalized === 'close'){hide();return}
+    if(normalized === 'clear'){write('');return}
+    write(`Unknown command: ${command.trim() || '(empty)'}`)
+  }
+  document.getElementById('secret-console-btn').addEventListener('click',show)
+  document.getElementById('secret-console-close').addEventListener('click',hide)
+  auth.addEventListener('submit',event=>{
+    event.preventDefault()
+    if(password.value !== SECRET_CONSOLE_PASSWORD){
+      write('Incorrect password.')
+      password.select()
+      return
+    }
+    authenticated = true
+    auth.classList.add('hidden')
+    form.classList.remove('hidden')
+    write('Console unlocked. Type help for commands.')
+    input.focus()
+  })
+  form.addEventListener('submit',event=>{
+    event.preventDefault()
+    if(!authenticated) return
+    run(input.value)
+    input.select()
+  })
 }
 
 // Challenges / Quests
@@ -453,6 +599,7 @@ function bootstrap(){
   document.getElementById('footer-theme-toggle').addEventListener('click',toggleTheme)
   document.getElementById('discreet-badge').addEventListener('click',handleBadgeClick)
   document.getElementById('track-close').addEventListener('click',closeOrderTracking)
+  setupSecretConsole()
 }
 
 window.addEventListener('DOMContentLoaded',()=>{bootstrap()})
