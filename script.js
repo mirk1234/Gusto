@@ -7,7 +7,7 @@ const LS_LAST_CHALLENGE = 'gusto.last_challenge_order'
 const QUEST_LIMITS = {toggles:3,orders:15,badgeClicks:3}
 const SECRET_CONSOLE_PASSWORD = 'Gusto_Group'
 const LS_LANGUAGE = 'gusto.language'
-const USD_TO_UAH = 41
+const USD_TO_UAH = 20
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=80'
 
 // Sample data
