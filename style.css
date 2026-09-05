@@ -55,7 +55,7 @@ main{margin-top:80px}
 .actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .card-chevron{width:32px;height:32px;border:1px solid var(--glass);border-radius:6px;background:transparent;color:var(--text);font-size:20px;line-height:1;cursor:pointer;transition:transform .3s ease,background .2s ease}
 .card-chevron[aria-expanded="true"]{transform:rotate(180deg);background:var(--glass)}
-.food-img{width:100%;height:160px;object-fit:cover;border-radius:8px}
+.food-img{display:block;width:100%;height:180px;aspect-ratio:4 / 3;object-fit:cover;object-position:center;border-radius:8px}
 .image-fallback{display:flex;align-items:center;justify-content:center;background:var(--glass);color:var(--muted);font-size:34px}
 .add-btn{background:var(--accent);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
 .cart-drawer{position:fixed;right:12px;top:80px;width:320px;background:var(--card);box-shadow:0 16px 40px rgba(0,0,0,0.12);border-radius:12px;padding:12px;display:flex;flex-direction:column;transform:translateX(10px)}
