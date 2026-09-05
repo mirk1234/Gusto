@@ -110,6 +110,7 @@
           <div class="copy">Gusto Pizzeria</div>
           <div class="crest-wrap">
             <button id="discreet-badge" class="discreet-badge" aria-label="crest">◈</button>
+            <button id="secret-console-btn" class="secret-console-btn" aria-label="Open secret console" title="Secret console">⌘</button>
           </div>
         </div>
 
@@ -124,7 +125,11 @@
 
         <div class="col social-col">
           <h4>Follow</h4>
-          <div class="socials">🐦 ▶️ 📸</div>
+          <div class="socials">
+            <a href="https://twitter.com" aria-label="Twitter / X" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/x/1DA1F2" alt="Twitter / X" /></a>
+            <a href="https://telegram.org" aria-label="Telegram" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/telegram/26A5E4" alt="Telegram" /></a>
+            <a href="https://instagram.com" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><img src="https://cdn.simpleicons.org/instagram/E4405F" alt="Instagram" /></a>
+          </div>
         </div>
 
         <div class="col news-col">
@@ -135,6 +140,23 @@
       </div>
       <div class="microcopy">Gusto Pizzeria is 100% a legitimate pizza establishment. No questions asked. All rights reserved.</div>
     </footer>
+
+    <aside id="secret-console" class="secret-console hidden" aria-hidden="true" aria-label="Secret console">
+      <div class="secret-console-head">
+        <strong>Secret Console</strong>
+        <button id="secret-console-close" class="secret-console-close" aria-label="Close secret console">✕</button>
+      </div>
+      <form id="secret-console-auth">
+        <label class="secret-console-auth-label" for="secret-console-password">Enter password</label>
+        <input id="secret-console-password" type="text" autocomplete="off" placeholder="Enter password" aria-label="Secret console password" />
+        <button class="primary" type="submit">Unlock</button>
+      </form>
+      <form id="secret-console-form" class="hidden">
+        <input id="secret-console-input" autocomplete="off" spellcheck="false" placeholder="help" aria-label="Console command" />
+        <button class="primary" type="submit">Run</button>
+      </form>
+      <output id="secret-console-output" class="secret-console-output" aria-live="polite">Password required.</output>
+    </aside>
 
     <script src="script.js" defer></script>
   </body>
