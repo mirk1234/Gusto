@@ -334,19 +334,25 @@ function setupSecretConsole(){
   let authenticated = false
   const show = ()=>{
     panel.classList.remove('hidden')
+    panel.hidden = false
     panel.setAttribute('aria-hidden','false')
     authenticated = false
     auth.classList.remove('hidden')
+    auth.hidden = false
     form.classList.add('hidden')
+    form.hidden = true
     output.textContent = 'Password required.'
     password.focus()
   }
   const hide = ()=>{
     panel.classList.add('hidden')
+    panel.hidden = true
     panel.setAttribute('aria-hidden','true')
     authenticated = false
     auth.classList.remove('hidden')
+    auth.hidden = false
     form.classList.add('hidden')
+    form.hidden = true
     password.value = ''
   }
   const write = message=>{output.textContent=message}
@@ -450,7 +456,9 @@ function setupSecretConsole(){
     }
     authenticated = true
     auth.classList.add('hidden')
+    auth.hidden = true
     form.classList.remove('hidden')
+    form.hidden = false
     write('Console unlocked. Type help for commands.')
     input.focus()
   })
