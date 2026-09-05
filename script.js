@@ -7,6 +7,7 @@ const LS_LAST_CHALLENGE = 'gusto.last_challenge_order'
 const QUEST_LIMITS = {toggles:3,orders:15,badgeClicks:3}
 const SECRET_CONSOLE_PASSWORD = 'Gusto_Group'
 const LS_LANGUAGE = 'gusto.language'
+const USD_TO_UAH = 41
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=80'
 
 // Sample data
@@ -85,9 +86,11 @@ const ukItemText = {
   cannoli:['Канолі (2 шт.)','Дві хрусткі трубочки з солодким кремом рикота, шоколадом і цукатами апельсина.'],'nutella-pizza':['Піца з нутелою','Тепле тісто з нутелою, фундуком, цукровою пудрою та полуницею.'],gelato:['Італійське джелато','Щедра кулька густого італійського джелато зі змінними смаками.'],
   'godfather-xl':['Велика піца «Хрещений батько»','Величезна піца з томатами, моцарелою, пепероні, ковбаскою, перцем, цибулею та грибами.'],'inferno-reaper':['Пекельне кальцоне Reaper','Велике кальцоне з гострою салямі, моцарелою, перцем і соусом Carolina Reaper.'],'monster-meatball':['Гігантський герой із мітболом','П’ять фунтів мітболів, маринари, проволоне та пармезану.'],'titanic-wings':['Титанічна рулетка зі 100 крилець','Сто крилець із класичним баффало, гострим перцем і соусом Carolina Reaper.'],'diablo-sicilian':['Гостра сицилійська піца Diablo','Товсте тісто з гострою салямі, калабрійським чилі, перцем, ковбаскою та моцарелою.']
 }
-const ukChallenges = {'big-spender':['Великий марнотрат','Зробіть замовлення від $100 за одну оплату.'],'order-count':['Постійний гість','Зробіть 15 замовлень загалом.'],'theme-lover':['Нічна сова','Перемкніть темний режим 3 рази та натисніть на герб.']}
 const isUkrainian = ()=>document.documentElement.lang === 'uk'
 const localizedItem = item=>isUkrainian() && ukItemText[item.id] ? {...item,title:ukItemText[item.id][0],desc:ukItemText[item.id][1]} : item
+const formatMoney = amount=>isUkrainian() ? `₴${(amount * USD_TO_UAH).toFixed(2)}` : `$${amount.toFixed(2)}`
+const formatThreshold = amount=>formatMoney(amount)
+const ukChallenges = {'big-spender':['Великий марнотрат'],'order-count':['Постійний гість','Зробіть 15 замовлень загалом.'],'theme-lover':['Нічна сова','Перемкніть темний режим 3 рази та натисніть на герб.']}
 
 // Utilities
 const el = (tag, props={}, ...children)=>{
@@ -182,12 +185,12 @@ function renderProducts(){
     cat.items.forEach(item=>{
       const displayItem = localizedItem(item)
       let selectedSize = 'S'
-      const priceBadge = el('span',{class:'price-badge'},`$${priceForSize(item.price,selectedSize).toFixed(2)}`)
+      const priceBadge = el('span',{class:'price-badge'},formatMoney(priceForSize(item.price,selectedSize)))
       const addSelectedItem = ()=>addToCart({...displayItem,price:priceForSize(item.price,selectedSize),category:cat.id},selectedSize)
       const sizeButtons = ['S','M','L'].map(size=>el('button',{class:size === selectedSize ? 'active' : '',ariaPressed:size === selectedSize,on:{click:(e)=>{
         e.stopPropagation()
         selectedSize = size
-        priceBadge.textContent = `$${priceForSize(item.price,size).toFixed(2)}`
+        priceBadge.textContent = formatMoney(priceForSize(item.price,size))
         sizeButtons.forEach(button=>{const isSelected = button.textContent === size;button.classList.toggle('active',isSelected);button.setAttribute('aria-pressed',String(isSelected))})
       }}},size))
       const header = el('div',{class:'accordion-header'},el('div',{},el('strong',{},displayItem.title),priceBadge),el('div',{class:'size-select'},sizeButtons))
@@ -244,7 +247,7 @@ function renderChallenges(){
   challenges.forEach(c=>{
     const complete = isChallengeUnlocked(c.id)
     const status = getChallengeStatus(c.id,complete,maxOrder)
-    const challengeText = isUkrainian() && ukChallenges[c.id] ? ukChallenges[c.id] : [c.title,c.desc]
+    const challengeText = isUkrainian() && ukChallenges[c.id] ? [ukChallenges[c.id][0], c.id === 'big-spender' ? `Зробіть замовлення від ${formatThreshold(100)} за одну оплату.` : ukChallenges[c.id][1]] : [c.title,c.desc]
     const spoiler = el('div',{class:'spoiler-mask',role:'button',tabindex:'0',on:{click:event=>event.currentTarget.classList.add('revealed'),keydown:event=>{
       if(event.key==='Enter' || event.key===' '){event.preventDefault();event.currentTarget.classList.add('revealed')}
     }}},el('p',{},challengeText[1]),el('div',{class:'status-footer'},status))
@@ -262,11 +265,11 @@ function renderChallenges(){
 
 function getChallengeStatus(id,complete,maxOrder){
   if(isUkrainian()){
-    if(id==='big-spender') return complete ? `СТАТУС: ВИКОНАНО ✅ ($${maxOrder.toFixed(2)} досягнуто)` : `СТАТУС: ОЧІКУЄТЬСЯ 🔒 (МАКСИМАЛЬНЕ: $${maxOrder.toFixed(2)} / $100)`
+    if(id==='big-spender') return complete ? `СТАТУС: ВИКОНАНО ✅ (${formatMoney(maxOrder)} досягнуто)` : `СТАТУС: ОЧІКУЄТЬСЯ 🔒 (МАКСИМАЛЬНЕ: ${formatMoney(maxOrder)} / ${formatThreshold(100)})`
     if(id==='order-count') return complete ? 'СТАТУС: ВИКОНАНО ✅ (ЗАМОВЛЕННЯ: 15 / 15)' : `СТАТУС: ОЧІКУЄТЬСЯ 🔒 (ЗАМОВЛЕННЯ: ${quests.orders} / 15)`
     if(id==='theme-lover') return complete ? 'СТАТУС: ВИКОНАНО ✅ (ПЕРЕМИКАНЬ: 3 / 3 • НАТИСКАНЬ: 3 / 3)' : `СТАТУС: ОЧІКУЄТЬСЯ 🔒 (ПЕРЕМИКАНЬ: ${quests.toggles} / 3 • НАТИСКАНЬ: ${quests.badgeClicks} / 3)`
   }
-  if(id==='big-spender') return complete ? `STATUS: COMPLETE ✅ ($${maxOrder.toFixed(2)} Reached)` : `STATUS: PENDING 🔒 (MAX ORDER: $${maxOrder.toFixed(2)} / $100)`
+  if(id==='big-spender') return complete ? `STATUS: COMPLETE ✅ (${formatMoney(maxOrder)} Reached)` : `STATUS: PENDING 🔒 (MAX ORDER: ${formatMoney(maxOrder)} / ${formatThreshold(100)})`
   if(id==='order-count') return complete ? 'STATUS: COMPLETE ✅ (ORDERS: 15 / 15)' : `STATUS: PENDING 🔒 (ORDERS: ${quests.orders} / 15)`
   if(id==='theme-lover') return complete ? 'STATUS: COMPLETE ✅ (TOGGLES: 3 / 3 • TAPS: 3 / 3)' : `STATUS: PENDING 🔒 (TOGGLES: ${quests.toggles} / 3 • TAPS: ${quests.badgeClicks} / 3)`
   return complete ? 'STATUS: COMPLETE ✅' : 'STATUS: PENDING 🔒'
@@ -289,12 +292,12 @@ function updateCartUI(){
   else{
     itemsEl.innerHTML=''
     cart.forEach((it,idx)=>{
-      const row = el('div',{class:'cart-row'}, `${it.title} (${it.size}) - $${it.price.toFixed(2)} `, el('button',{on:{click:()=>{cart.splice(idx,1);updateCartUI()}},class:'icon cart-remove',title:`Remove ${it.title}`,ariaLabel:`Remove ${it.title}`},'🗑️'))
+      const row = el('div',{class:'cart-row'}, `${it.title} (${it.size}) - ${formatMoney(it.price)} `, el('button',{on:{click:()=>{cart.splice(idx,1);updateCartUI()}},class:'icon cart-remove',title:`Remove ${it.title}`,ariaLabel:`Remove ${it.title}`},'🗑️'))
       itemsEl.appendChild(row)
     })
   }
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0)
-  document.getElementById('cart-total').textContent=`$${total.toFixed(2)}`
+  document.getElementById('cart-total').textContent=formatMoney(total)
   countEl.textContent = String(cart.length)
 }
 
@@ -327,7 +330,7 @@ function openOrderTracking(orderId){
   const last = JSON.parse(localStorage.getItem(LS_LAST_CHALLENGE)||'null')
   if(!last){document.getElementById('track-info').textContent=isUkrainian() ? 'Немає активного замовлення' : 'No active order';return}
   const order = orders.find(o=>o.id===last.orderId)
-  document.getElementById('track-info').textContent = order ? `${isUkrainian() ? 'Замовлення' : 'Order'} #${order.id} • $${order.total.toFixed(2)}` : (isUkrainian() ? 'Дані замовлення відсутні' : 'Order data missing')
+  document.getElementById('track-info').textContent = order ? `${isUkrainian() ? 'Замовлення' : 'Order'} #${order.id} • ${formatMoney(order.total)}` : (isUkrainian() ? 'Дані замовлення відсутні' : 'Order data missing')
   startCountdown(last.deadline)
 }
 function closeOrderTracking(){
@@ -647,7 +650,7 @@ function setupSearch(){
           closeDropdown()
           s.value = ''
           card.scrollIntoView({behavior:'smooth',block:'center'})
-        }}},el('span',{class:'search-result-copy'},el('span',{class:'search-result-title'},item.title),el('span',{class:'search-result-category'},item.categoryTitle)),el('span',{class:'search-result-price'},`$${priceForSize(item.price,'S').toFixed(2)}`))
+        }}},el('span',{class:'search-result-copy'},el('span',{class:'search-result-title'},localizedItem(item).title),el('span',{class:'search-result-category'},isUkrainian() && ukItemText[item.id] ? 'Меню' : item.categoryTitle)),el('span',{class:'search-result-price'},formatMoney(priceForSize(item.price,'S'))))
         dropdown.appendChild(result)
       })
     }
