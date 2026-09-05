@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Gusto Pizzeria</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <div class="logo">🍕</div>
+        <div class="brand-text">
+          <h1>Gusto Pizzeria</h1>
+          <div class="tagline">Authentic slices. No questions asked.</div>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <div class="search-wrap">
+          <input id="search-input" class="search-input" placeholder="Search menu..." aria-label="Search menu" autocomplete="off" />
+          <div id="search-dropdown" class="search-dropdown" role="listbox" aria-label="Menu search results"></div>
+        </div>
+        <button id="cart-btn" class="icon cart" aria-label="Open cart">🛒<span class="cart-count" aria-hidden="true">0</span></button>
+        <button id="theme-toggle" class="icon theme-toggle" aria-label="Toggle theme">🌙</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="classics" class="category-section-block">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="true">Classics<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="menu-list" data-cat="classics" aria-live="polite"></div>
+      </section>
+
+      <section id="special" class="category-section-block">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="true">Specialties<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="menu-list" data-cat="special"></div>
+      </section>
+
+      <section id="sides" class="category-section-block">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="true">Sides & Drinks<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="menu-list" data-cat="sides"></div>
+      </section>
+
+      <section id="pastas" class="category-section-block">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="true">Pastas & Lasagna<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="menu-list" data-cat="pastas"></div>
+      </section>
+
+      <section id="paninis" class="category-section-block">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="true">Gourmet Sandwiches / Paninis<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="menu-list" data-cat="paninis"></div>
+      </section>
+
+      <section id="salads" class="category-section-block">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="true">Salads & Starters<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="menu-list" data-cat="salads"></div>
+      </section>
+
+      <section id="desserts" class="category-section-block">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="true">Desserts<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="menu-list" data-cat="desserts"></div>
+      </section>
+
+      <section id="underground" class="category-section-block underground-category" aria-hidden="true">
+        <h2 class="category-title"><button class="category-toggle" aria-expanded="false"><span class="underground-status-icon" aria-hidden="true">🔒</span> Underground<span class="category-chevron" aria-hidden="true">▾</span></button></h2>
+        <div class="underground-lock" aria-live="polite">🔒 <span id="underground-progress"></span></div>
+        <p class="underground-timed-note">30-MINUTE TIMED CHALLENGE: Send us a photo of you finishing the meal within 30 minutes of delivery to get 100% refunded / free.</p>
+        <div class="menu-list" data-cat="underground"></div>
+      </section>
+
+      <!-- Confidential challenges appear at the bottom -->
+      <section id="challenges-section" class="challenges-section" aria-hidden="true">
+        <h2>Confidential / Challenges</h2>
+        <div id="challenges-grid" class="challenges-grid"></div>
+      </section>
+
+      <aside id="cart-drawer" class="cart-drawer hidden" aria-hidden="true" role="dialog" aria-label="Your Order">
+        <div class="cart-head">
+          <h2>Your Order</h2>
+          <button id="cart-close" aria-label="Close cart">✕</button>
+        </div>
+        <div id="cart-items" class="cart-items">Cart is empty</div>
+        <div class="cart-footer">
+          <div class="cart-total">Total: <span id="cart-total">$0.00</span></div>
+          <button id="checkout" class="primary">Checkout</button>
+        </div>
+      </aside>
+
+      <div id="order-tracking" class="order-tracking hidden" aria-hidden="true" role="region" aria-label="Order Tracking">
+        <div class="track-inner">
+          <button id="track-close" class="track-close" aria-label="Close">✕</button>
+          <h3>Order Tracking</h3>
+          <div id="track-info">No active order</div>
+          <label class="upload-btn" for="photo-input">Submit Photo Evidence</label>
+          <input id="photo-input" type="file" accept="image/*" />
+          <div id="upload-status" class="upload-status"></div>
+          <div class="timer">Time left: <span id="countdown">--:--</span></div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner container">
+        <div class="col brand-col">
+          <div class="logo">🍕</div>
+          <div class="copy">Gusto Pizzeria</div>
+          <div class="crest-wrap">
+            <button id="discreet-badge" class="discreet-badge" aria-label="crest">◈</button>
+          </div>
+        </div>
+
+        <div class="col links-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#">Menu</a></li>
+            <li><a href="#">Locations</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+
+        <div class="col social-col">
+          <h4>Follow</h4>
+          <div class="socials">🐦 ▶️ 📸</div>
+        </div>
+
+        <div class="col news-col">
+          <h4>Join the Family</h4>
+          <form id="newsletter-form"><input id="news-email" placeholder="Your email" type="email" /><button>Join</button></form>
+          <div class="theme-inline">Theme: <button id="footer-theme-toggle" class="icon theme-toggle">🌙</button></div>
+        </div>
+      </div>
+      <div class="microcopy">Gusto Pizzeria is 100% a legitimate pizza establishment. No questions asked. All rights reserved.</div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
