@@ -6,6 +6,7 @@ const LS_ORDERS = 'gusto.orders'
 const LS_LAST_CHALLENGE = 'gusto.last_challenge_order'
 const QUEST_LIMITS = {toggles:3,orders:15,badgeClicks:3}
 const SECRET_CONSOLE_PASSWORD = 'Gusto_Group'
+const LS_LANGUAGE = 'gusto.language'
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=80'
 
 // Sample data
@@ -73,6 +74,20 @@ const challenges = [
   {id:'order-count',title:'Frequent Fan',desc:'Place 15 total orders across sessions.',reward:'Unlocked!'},
   {id:'theme-lover',title:'Night Owl',desc:'Switch Dark mode 3 times and tap the footer crest.',reward:'Unlocked!'}
 ]
+
+const ukItemText = {
+  marg:['Маргарита','Помідори Сан-Марцано, свіжа моцарела, базилік, оливкова олія та морська сіль.'],pep:['Пепероні','Хрусткий пепероні, томатний соус, моцарела, орегано та олія з чилі.'],'four-cheese':['Чотири сири','Моцарела, горгонзола, проволоне та витриманий пармезан із чорним перцем.'],stagioni:['Кватро стаджоні','Артишоки, гриби, прошуто котто, оливки та моцарела.'],calzone:['Кальцоне','Тісто з рикотою, моцарелою, шинкою, базиліком і томатним соусом.'],marinara:['Маринара','Томат Сан-Марцано, запечений часник, орегано, базилік та оливкова олія.'],
+  truf:['Грибний трюфель','Лісові гриби, рикота, моцарела, чебрець і ароматна біла трюфельна олія.'],bbq:['Курка барбекю','Копчений соус барбекю, курка, червона цибуля, моцарела, кінза та лайм.'],diavola:['Діавола','Гостра салямі, печений перець, моцарела, пластівці чилі та гострий мед.'],prosciutto:['Прошуто та рукола','Прошуто, рукола, пармезан і бальзамічна глазур на теплій моцарелі.'],'pesto-chicken':['Курка з песто','Песто з базиліку, запечена курка, моцарела, помідори чері та пармезан.'],fiorentina:['Фіорентина','Шпинат, яйце, часник, моцарела та пекоріно з чорним перцем.'],
+  garlic:['Часникові вузлики (6)','Шість вузликів із пармезаном, петрушкою та часниковим маслом із маринарою.'],cola:['Домашня кола','Охолоджена кола з карамельними нотами та легким цитрусовим післясмаком.'],mozzarella:['Палички моцарели','Хрусткі паніровані палички моцарели з теплим томатним соусом.'],soda:['Італійська газована вода','Газована вода з домашнім цитрусовим сиропом, льодом і лимоном.'],tiramisu:['Тірамісу','Печиво, просочене еспресо, крем із маскарпоне та какао.'],focaccia:['Часникова фокача','Тепла пухка фокача з часниковою олією, розмарином, сіллю та пармезаном.'],'san-pellegrino':['Газована вода San Pellegrino','Охолоджена італійська мінеральна вода з дрібними бульбашками.'],
+  lasagna:['Лазанья болоньєзе','Шари пасти, рагу з яловичини та свинини, рикота, моцарела й пармезан.'],'baked-penne':['Запечене пенне','Пенне з томатним соусом, італійською ковбаскою, базиліком, рикотою та моцарелою.'],alfredo:['Фетучіні альфредо','Свіжа паста у вершково-пармезановому соусі з маслом і перцем.'],carbonara:['Карбонара','Шовковистий соус із яйця та пекоріно, хрустка панчета й чорний перець.'],
+  'chicken-parm-sub':['Саб із куркою пармезан','Хрустка курка, маринара, розплавлена моцарела та пармезан у підсмаженій булці.'],'italian-combo':['Італійський паніні','Прошуто, салямі, мортадела, проволоне, помідор і салат з орегано.'],'meatball-hero':['Герой із мітболами','Домашні мітболи, маринара, проволоне та базилік у підсмаженій булці.'],
+  caesar:['Салат Цезар','Хрусткий ромейн, пармезан, часникові крутони та фірмова заправка Цезар.'],caprese:['Салат капрезе','Свіжа моцарела, стиглі помідори, базилік, оливкова олія та бальзамік.'],wings:['Крильця баффало (10 шт.)','Десять хрустких крилець у гострому соусі баффало з сирною заправкою.'],calamari:['Кальмари фрітті','Ніжні хрусткі кальмари з лимоном, петрушкою та маринарою.'],
+  cannoli:['Канолі (2 шт.)','Дві хрусткі трубочки з солодким кремом рикота, шоколадом і цукатами апельсина.'],'nutella-pizza':['Піца з нутелою','Тепле тісто з нутелою, фундуком, цукровою пудрою та полуницею.'],gelato:['Італійське джелато','Щедра кулька густого італійського джелато зі змінними смаками.'],
+  'godfather-xl':['Велика піца «Хрещений батько»','Величезна піца з томатами, моцарелою, пепероні, ковбаскою, перцем, цибулею та грибами.'],'inferno-reaper':['Пекельне кальцоне Reaper','Велике кальцоне з гострою салямі, моцарелою, перцем і соусом Carolina Reaper.'],'monster-meatball':['Гігантський герой із мітболом','П’ять фунтів мітболів, маринари, проволоне та пармезану.'],'titanic-wings':['Титанічна рулетка зі 100 крилець','Сто крилець із класичним баффало, гострим перцем і соусом Carolina Reaper.'],'diablo-sicilian':['Гостра сицилійська піца Diablo','Товсте тісто з гострою салямі, калабрійським чилі, перцем, ковбаскою та моцарелою.']
+}
+const ukChallenges = {'big-spender':['Великий марнотрат','Зробіть замовлення від $100 за одну оплату.'],'order-count':['Постійний гість','Зробіть 15 замовлень загалом.'],'theme-lover':['Нічна сова','Перемкніть темний режим 3 рази та натисніть на герб.']}
+const isUkrainian = ()=>document.documentElement.lang === 'uk'
+const localizedItem = item=>isUkrainian() && ukItemText[item.id] ? {...item,title:ukItemText[item.id][0],desc:ukItemText[item.id][1]} : item
 
 // Utilities
 const el = (tag, props={}, ...children)=>{
@@ -165,21 +180,22 @@ function renderProducts(){
     if(!container) return
     container.innerHTML=''
     cat.items.forEach(item=>{
+      const displayItem = localizedItem(item)
       let selectedSize = 'S'
       const priceBadge = el('span',{class:'price-badge'},`$${priceForSize(item.price,selectedSize).toFixed(2)}`)
-      const addSelectedItem = ()=>addToCart({...item,price:priceForSize(item.price,selectedSize),category:cat.id},selectedSize)
+      const addSelectedItem = ()=>addToCart({...displayItem,price:priceForSize(item.price,selectedSize),category:cat.id},selectedSize)
       const sizeButtons = ['S','M','L'].map(size=>el('button',{class:size === selectedSize ? 'active' : '',ariaPressed:size === selectedSize,on:{click:(e)=>{
         e.stopPropagation()
         selectedSize = size
         priceBadge.textContent = `$${priceForSize(item.price,size).toFixed(2)}`
         sizeButtons.forEach(button=>{const isSelected = button.textContent === size;button.classList.toggle('active',isSelected);button.setAttribute('aria-pressed',String(isSelected))})
       }}},size))
-      const header = el('div',{class:'accordion-header'},el('div',{},el('strong',{},item.title),priceBadge),el('div',{class:'size-select'},sizeButtons))
+      const header = el('div',{class:'accordion-header'},el('div',{},el('strong',{},displayItem.title),priceBadge),el('div',{class:'size-select'},sizeButtons))
       const body = el('div',{class:'accordion-body'},
-        el('div',{class:'desc'},item.desc),
-        createFoodImage(item)
+        el('div',{class:'desc'},displayItem.desc),
+        createFoodImage(displayItem)
       )
-      const actions = el('div',{class:'actions'},el('button',{class:'add-btn',on:{click:(e)=>{e.stopPropagation();addSelectedItem()} }},'Add to Order'),el('button',{class:'card-chevron',ariaLabel:`Expand ${item.title}`,ariaExpanded:false,on:{click:(e)=>{e.stopPropagation();toggleExpandedItem(item.id)} }},'▾'))
+      const actions = el('div',{class:'actions'},el('button',{class:'add-btn',on:{click:(e)=>{e.stopPropagation();addSelectedItem()} }},isUkrainian() ? 'Додати до замовлення' : 'Add to Order'),el('button',{class:'card-chevron',ariaLabel:`Expand ${displayItem.title}`,ariaExpanded:false,on:{click:(e)=>{e.stopPropagation();toggleExpandedItem(item.id)} }},'▾'))
       const acc = el('div',{class:'accordion'},header,body,actions)
       // toggle
       header.setAttribute('role','button')
@@ -221,16 +237,19 @@ function renderChallenges(){
   undergroundToggle.setAttribute('aria-expanded',String(undergroundOpen))
   underground.querySelector('.menu-list').setAttribute('aria-hidden',String(!undergroundOpen))
   undergroundIcon.textContent = undergroundUnlocked ? '✅' : '🔒'
-  undergroundProgress.textContent = undergroundUnlocked ? '0 challenge quests remaining (Unlocked!)' : `${remainingQuests} challenge quests remaining`
+  undergroundProgress.textContent = undergroundUnlocked
+    ? (isUkrainian() ? 'Залишилось завдань: 0 (Розблоковано!)' : '0 challenge quests remaining (Unlocked!)')
+    : (isUkrainian() ? `Залишилось завдань: ${remainingQuests}` : `${remainingQuests} challenge quests remaining`)
   // populate cards (hidden via overlay until unlocked)
   challenges.forEach(c=>{
     const complete = isChallengeUnlocked(c.id)
     const status = getChallengeStatus(c.id,complete,maxOrder)
+    const challengeText = isUkrainian() && ukChallenges[c.id] ? ukChallenges[c.id] : [c.title,c.desc]
     const spoiler = el('div',{class:'spoiler-mask',role:'button',tabindex:'0',on:{click:event=>event.currentTarget.classList.add('revealed'),keydown:event=>{
       if(event.key==='Enter' || event.key===' '){event.preventDefault();event.currentTarget.classList.add('revealed')}
-    }}},el('p',{},c.desc),el('div',{class:'status-footer'},status))
-    spoiler.setAttribute('aria-label',`Reveal ${c.title} challenge details`)
-    const card = el('div',{class:`challenge ${complete?'complete':'locked'}`},el('h3',{},c.title),spoiler)
+    }}},el('p',{},challengeText[1]),el('div',{class:'status-footer'},status))
+    spoiler.setAttribute('aria-label',`${isUkrainian() ? 'Показати деталі завдання' : 'Reveal challenge details'}: ${challengeText[0]}`)
+    const card = el('div',{class:`challenge ${complete?'complete':'locked'}`},el('h3',{},challengeText[0]),spoiler)
     grid.appendChild(card)
   })
 
@@ -242,6 +261,11 @@ function renderChallenges(){
 }
 
 function getChallengeStatus(id,complete,maxOrder){
+  if(isUkrainian()){
+    if(id==='big-spender') return complete ? `СТАТУС: ВИКОНАНО ✅ ($${maxOrder.toFixed(2)} досягнуто)` : `СТАТУС: ОЧІКУЄТЬСЯ 🔒 (МАКСИМАЛЬНЕ: $${maxOrder.toFixed(2)} / $100)`
+    if(id==='order-count') return complete ? 'СТАТУС: ВИКОНАНО ✅ (ЗАМОВЛЕННЯ: 15 / 15)' : `СТАТУС: ОЧІКУЄТЬСЯ 🔒 (ЗАМОВЛЕННЯ: ${quests.orders} / 15)`
+    if(id==='theme-lover') return complete ? 'СТАТУС: ВИКОНАНО ✅ (ПЕРЕМИКАНЬ: 3 / 3 • НАТИСКАНЬ: 3 / 3)' : `СТАТУС: ОЧІКУЄТЬСЯ 🔒 (ПЕРЕМИКАНЬ: ${quests.toggles} / 3 • НАТИСКАНЬ: ${quests.badgeClicks} / 3)`
+  }
   if(id==='big-spender') return complete ? `STATUS: COMPLETE ✅ ($${maxOrder.toFixed(2)} Reached)` : `STATUS: PENDING 🔒 (MAX ORDER: $${maxOrder.toFixed(2)} / $100)`
   if(id==='order-count') return complete ? 'STATUS: COMPLETE ✅ (ORDERS: 15 / 15)' : `STATUS: PENDING 🔒 (ORDERS: ${quests.orders} / 15)`
   if(id==='theme-lover') return complete ? 'STATUS: COMPLETE ✅ (TOGGLES: 3 / 3 • TAPS: 3 / 3)' : `STATUS: PENDING 🔒 (TOGGLES: ${quests.toggles} / 3 • TAPS: ${quests.badgeClicks} / 3)`
@@ -261,7 +285,7 @@ function addToCart(item,size='M'){
 function updateCartUI(){
   const itemsEl = document.getElementById('cart-items')
   const countEl = document.querySelector('.cart-count')
-  if(cart.length===0) itemsEl.textContent='Cart is empty'
+  if(cart.length===0) itemsEl.textContent=isUkrainian() ? 'Кошик порожній' : 'Cart is empty'
   else{
     itemsEl.innerHTML=''
     cart.forEach((it,idx)=>{
@@ -301,9 +325,9 @@ function openOrderTracking(orderId){
   panel.classList.remove('hidden')
   panel.setAttribute('aria-hidden','false')
   const last = JSON.parse(localStorage.getItem(LS_LAST_CHALLENGE)||'null')
-  if(!last){document.getElementById('track-info').textContent='No active order';return}
+  if(!last){document.getElementById('track-info').textContent=isUkrainian() ? 'Немає активного замовлення' : 'No active order';return}
   const order = orders.find(o=>o.id===last.orderId)
-  document.getElementById('track-info').textContent = order?`Order #${order.id} • $${order.total.toFixed(2)}`:'Order data missing'
+  document.getElementById('track-info').textContent = order ? `${isUkrainian() ? 'Замовлення' : 'Order'} #${order.id} • $${order.total.toFixed(2)}` : (isUkrainian() ? 'Дані замовлення відсутні' : 'Order data missing')
   startCountdown(last.deadline)
 }
 function closeOrderTracking(){
@@ -341,7 +365,7 @@ function setupSecretConsole(){
     auth.hidden = false
     form.classList.add('hidden')
     form.hidden = true
-    output.textContent = 'Password required.'
+    output.textContent = document.documentElement.lang === 'uk' ? 'Потрібен пароль.' : 'Password required.'
     password.focus()
   }
   const hide = ()=>{
@@ -447,6 +471,14 @@ function setupSecretConsole(){
   }
   document.getElementById('secret-console-btn').addEventListener('click',show)
   document.getElementById('secret-console-close').addEventListener('click',hide)
+  document.getElementById('password-visibility').addEventListener('click',()=>{
+    const visible = password.type === 'text'
+    password.type = visible ? 'password' : 'text'
+    const button = document.getElementById('password-visibility')
+    button.textContent = visible ? '◉' : '◌'
+    button.title = visible ? 'Show password' : 'Hide password'
+    button.setAttribute('aria-label',button.title)
+  })
   auth.addEventListener('submit',event=>{
     event.preventDefault()
     if(password.value !== SECRET_CONSOLE_PASSWORD){
@@ -468,6 +500,63 @@ function setupSecretConsole(){
     run(input.value)
     input.select()
   })
+}
+
+function setupLanguage(){
+  const translations = {
+    en:{search:'Search menu...',cart:'Open cart',theme:'Toggle theme',language:'Switch to Ukrainian',categories:{classics:'Classics',special:'Specialties',sides:'Sides & Drinks',pastas:'Pastas & Lasagna',paninis:'Gourmet Sandwiches / Paninis',salads:'Salads & Starters',desserts:'Desserts',underground:'Underground'},quick:'Quick Links',menu:'Menu',locations:'Locations',careers:'Careers',follow:'Follow',join:'Join the Family',email:'Your email',joinButton:'Join',themeLabel:'Theme:',close:'Close',tracking:'Order Tracking',noOrder:'No active order',photo:'Submit Photo Evidence',time:'Time left:',console:'Secret Console',password:'Enter password',unlock:'Unlock',passwordRequired:'Password required.',languageButton:'UA'},
+    uk:{search:'Пошук у меню...',cart:'Відкрити кошик',theme:'Змінити тему',language:'Перемкнути на англійську',categories:{classics:'Класика',special:'Фірмові страви',sides:'Закуски та напої',pastas:'Паста та лазанья',paninis:'Гурме-сендвічі / паніні',salads:'Салати та закуски',desserts:'Десерти',underground:'Підпілля'},quick:'Швидкі посилання',menu:'Меню',locations:'Локації',careers:'Вакансії',follow:'Стежте за нами',join:'Приєднуйтесь до родини',email:'Ваша електронна пошта',joinButton:'Приєднатися',themeLabel:'Тема:',close:'Закрити',tracking:'Відстеження замовлення',noOrder:'Немає активного замовлення',photo:'Надіслати фото-доказ',time:'Залишилось часу:',console:'Секретна консоль',password:'Введіть пароль',unlock:'Розблокувати',passwordRequired:'Потрібен пароль.',languageButton:'EN'}
+  }
+  let language = localStorage.getItem(LS_LANGUAGE) === 'uk' ? 'uk' : 'en'
+  const apply = ()=>{
+    const t = translations[language]
+    document.documentElement.lang = language === 'uk' ? 'uk' : 'en'
+    document.getElementById('search-input').placeholder = t.search
+    document.getElementById('search-input').setAttribute('aria-label',t.search)
+    document.getElementById('cart-btn').setAttribute('aria-label',t.cart)
+    document.querySelectorAll('.theme-toggle').forEach(button=>button.setAttribute('aria-label',t.theme))
+    const button = document.getElementById('language-toggle')
+    button.textContent = t.languageButton
+    button.setAttribute('aria-label',t.language)
+    const categoryIds = Object.keys(t.categories)
+    categoryIds.forEach(id=>{
+      const toggle = document.querySelector(`#${id} .category-toggle`)
+      if(toggle) toggle.childNodes.forEach(node=>{if(node.nodeType === Node.TEXT_NODE && node.textContent.trim()) node.textContent = ` ${t.categories[id]}`})
+    })
+    const headings = document.querySelectorAll('.links-col h4,.social-col h4,.news-col h4')
+    if(headings[0]) headings[0].textContent=t.quick
+    if(headings[1]) headings[1].textContent=t.follow
+    if(headings[2]) headings[2].textContent=t.join
+    const links = document.querySelectorAll('.links-col a')
+    ;[t.menu,t.locations,t.careers].forEach((text,index)=>{if(links[index]) links[index].textContent=text})
+    document.getElementById('news-email').placeholder=t.email
+    document.querySelector('#newsletter-form button').textContent=t.joinButton
+    document.querySelector('.theme-inline').firstChild.textContent=`${t.themeLabel} `
+    document.querySelector('#challenges-section h2').textContent=language === 'uk' ? 'Таємні завдання' : 'Confidential / Challenges'
+    document.querySelector('.underground-timed-note').textContent=language === 'uk' ? 'ВИПРОБУВАННЯ НА ЧАС: Надішліть фото завершеної страви протягом 30 хвилин після доставки, щоб отримати повне повернення коштів.' : '30-MINUTE TIMED CHALLENGE: Send us a photo of you finishing the meal within 30 minutes of delivery to get 100% refunded / free.'
+    document.querySelector('#cart-close').setAttribute('aria-label',t.close)
+    document.querySelector('#track-close').setAttribute('aria-label',t.close)
+    document.querySelector('#order-tracking h3').textContent=t.tracking
+    document.querySelector('#track-info').textContent=document.querySelector('#track-info').textContent === 'No active order' || document.querySelector('#track-info').textContent === 'Немає активного замовлення' ? t.noOrder : document.querySelector('#track-info').textContent
+    document.querySelector('.upload-btn').textContent=t.photo
+    document.querySelector('.timer').firstChild.textContent=`${t.time} `
+    document.querySelector('#secret-console strong').textContent=t.console
+    document.querySelector('.secret-console-auth-label').textContent=t.password
+    document.querySelector('#secret-console-password').placeholder=t.password
+    document.querySelector('#secret-console-auth .primary').textContent=t.unlock
+    const visibilityButton = document.getElementById('password-visibility')
+    const passwordVisible = document.getElementById('secret-console-password').type === 'text'
+    visibilityButton.textContent = passwordVisible ? '◉' : '◌'
+    visibilityButton.title = passwordVisible ? (language === 'uk' ? 'Сховати пароль' : 'Hide password') : (language === 'uk' ? 'Показати пароль' : 'Show password')
+    visibilityButton.setAttribute('aria-label',visibilityButton.title)
+    renderProducts()
+    renderChallenges()
+    updateCartUI()
+    if(!authenticatedConsoleState()) document.querySelector('#secret-console-output').textContent=t.passwordRequired
+  }
+  const authenticatedConsoleState = ()=>!document.getElementById('secret-console-form').hidden
+  document.getElementById('language-toggle').addEventListener('click',()=>{language=language === 'en' ? 'uk' : 'en';localStorage.setItem(LS_LANGUAGE,language);apply()})
+  apply()
 }
 
 // Challenges / Quests
@@ -608,6 +697,7 @@ function bootstrap(){
   document.getElementById('discreet-badge').addEventListener('click',handleBadgeClick)
   document.getElementById('track-close').addEventListener('click',closeOrderTracking)
   setupSecretConsole()
+  setupLanguage()
 }
 
 window.addEventListener('DOMContentLoaded',()=>{bootstrap()})
